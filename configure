@@ -1,0 +1,40 @@
+#!/usr/bin/env sh
+
+mkdir certs
+cd certs
+
+openssl genrsa -out ca.key 4096
+
+openssl req -x509 -new -nodes -sha512 -days 3650 \
+ -subj "/C=CN/ST=Beijing/L=Beijing/O=example/OU=Personal/CN=development-server" \
+ -key ca.key \
+ -out ca.crt
+
+openssl genrsa -out development-server.key 4096
+
+openssl req -sha512 -new \
+    -subj "/C=CN/ST=Beijing/L=Beijing/O=example/OU=Personal/CN=development-server" \
+    -key development-server.key \
+    -out development-server.csr
+	
+openssl x509 -req -sha512 -days 3650 \
+    -extfile v3.ext \
+    -CA ca.crt -CAkey ca.key -CAcreateserial \
+    -in development-server.csr \
+    -out development-server.crt	
+	
+openssl x509 -in development-server.crt -text -noout
+
+cp development-server.crt /usr/local/share/ca-certificates/development-server.crt 
+update-ca-certificates
+
+cp development-server.crt ../data/cert/
+cp development-server.key ../data/cert/
+
+openssl x509 -inform PEM -in development-server.crt -out development-server.cert
+
+cp development-server.cert /etc/docker/certs.d/development-server\:1443/
+cp development-server.key /etc/docker/certs.d/development-server\:1443/
+cp ca.crt /etc/docker/certs.d/development-server\:1443/
+./prepare
+systemctl restart docker
