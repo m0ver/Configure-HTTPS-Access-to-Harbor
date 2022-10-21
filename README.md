@@ -1,5 +1,4 @@
 # Configure-HTTPS-Access-to-Harbor
-Configure HTTPS Access to Harbor
 
 By default, Harbor does not ship with certificates. It is possible to deploy Harbor without security, so that you can connect to it over HTTP. However, using HTTP is acceptable only in air-gapped test or development environments that do not have a connection to the external internet. Using HTTP in environments that are not air-gapped exposes you to man-in-the-middle attacks. In production environments, always use HTTPS. If you enable Content Trust with Notary to properly sign all images, you must use HTTPS.
 
@@ -7,7 +6,7 @@ To configure HTTPS, you must create SSL certificates. You can use certificates t
 
 The procedures below assume that your Harbor registry’s hostname is yourdomain.com, and that its DNS record points to the host on which you are running Harbor.
 
-Generate a Certificate Authority Certificate
+## Generate a Certificate Authority Certificate
 In a production environment, you should obtain a certificate from a CA. In a test or development environment, you can generate your own CA. To generate a CA certficate, run the following commands.
 
 Generate a CA certificate private key.
@@ -23,7 +22,7 @@ openssl req -x509 -new -nodes -sha512 -days 3650 \
  -key ca.key \
  -out ca.crt
 ```
-Generate a Server Certificate
+## Generate a Server Certificate
 The certificate usually contains a .crt file and a .key file, for example, yourdomain.com.crt and yourdomain.com.key.
 
 Generate a private key.
@@ -66,7 +65,7 @@ openssl x509 -req -sha512 -days 3650 \
     -in yourdomain.com.csr \
     -out yourdomain.com.crt
 ```
-Provide the Certificates to Harbor and Docker
+## Provide the Certificates to Harbor and Docker
 After generating the ca.crt, yourdomain.com.crt, and yourdomain.com.key files, you must provide them to Harbor and to Docker, and reconfigure Harbor to use them.
 
 Copy the server certificate and key into the certficates folder on your Harbor host.
@@ -102,7 +101,7 @@ The following example illustrates a configuration that uses custom certificates.
        ├── yourdomain.com.key   <-- Server key signed by CA
        └── ca.crt               <-- Certificate authority that signed the registry certificate
 ```
-Deploy or Reconfigure Harbor
+## Deploy or Reconfigure Harbor
 If you have not yet deployed Harbor, see Configure the Harbor YML File for information about how to configure Harbor to use the certificates by specifying the hostname and https attributes in harbor.yml.
 
 If you already deployed Harbor with HTTP and want to reconfigure it to use HTTPS, perform the following steps.
@@ -123,7 +122,7 @@ Restart Harbor:
 ```
 docker-compose up -d
 ```
-Verify the HTTPS Connection
+## Verify the HTTPS Connection
 After setting up HTTPS for Harbor, you can verify the HTTPS connection by performing the following steps.
 
 Open a browser and enter https://yourdomain.com. It should display the Harbor interface.
