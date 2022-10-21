@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-mkdir certs
+if ! test -d certs ; then mkdir certs ;fi
 cd certs
 
 openssl genrsa -out ca.key 4096
@@ -33,8 +33,12 @@ cp development-server.key ../data/cert/
 
 openssl x509 -inform PEM -in development-server.crt -out development-server.cert
 
+if ! test -d /etc/docker/certs.d/development-server\:1443/ ; then mkdir -p /etc/docker/certs.d/development-server\:1443/ ;fi
+
 cp development-server.cert /etc/docker/certs.d/development-server\:1443/
 cp development-server.key /etc/docker/certs.d/development-server\:1443/
 cp ca.crt /etc/docker/certs.d/development-server\:1443/
+
 ./prepare
+
 systemctl restart docker
