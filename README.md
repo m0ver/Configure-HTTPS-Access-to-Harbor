@@ -132,8 +132,10 @@ Some browsers might show a warning stating that the Certificate Authority (CA) i
 On a machine that runs the Docker daemon, check the /etc/docker/daemon.json file to make sure that the -insecure-registry option is not set for https://yourdomain.com.
 
 Log into Harbor from the Docker client.
-
+```
 docker login yourdomain.com
+```
 If you’ve mapped nginx 443 port to a different port,add the port in the login command.
-
+```
 docker login yourdomain.com:port
+```
